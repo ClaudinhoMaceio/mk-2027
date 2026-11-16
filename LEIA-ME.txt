@@ -1,0 +1,83 @@
+MK AUDIOVISUAL — GESTÃO DE CONTRATOS E EVENTOS
+Versão inicial funcional (HTML/CSS/JS + Supabase)
+
+O QUE ESTA VERSÃO FAZ
+- Login administrativo por Supabase Auth.
+- Cadastro de clientes, data/local do evento, produtos e valores.
+- Gera link individual com token aleatório para o cliente.
+- Portal público do contrato por link.
+- Assinatura manuscrita no celular/computador + nome digitado + concordância.
+- Registra assinatura, horário e user-agent no banco.
+- Painel com indicadores e listagem.
+- Agenda mensal com eventos por data.
+- Geração de PDF para cliente e administrador.
+- Interface responsiva.
+
+IMPORTANTE SOBRE A ASSINATURA E O PDF
+Esta versão registra evidências da assinatura no banco e gera o PDF no navegador quando solicitado.
+O PDF não é arquivado automaticamente em Storage nesta primeira versão. A assinatura e os dados ficam na nuvem.
+O texto contratual incluído é um MODELO INICIAL. Antes de utilizar comercialmente, peça revisão jurídica, especialmente cláusulas de cancelamento, multas, danos, energia, montagem, operação, transporte, força maior e foro.
+A assinatura eletrônica simples não equivale automaticamente à assinatura qualificada ICP-Brasil. Para contratos de maior risco, avalie uma plataforma de assinatura com trilha de auditoria e validação de identidade.
+
+PASSO 1 — CRIAR O BANCO GRATUITO
+1. Acesse https://supabase.com e crie uma conta.
+2. Crie um projeto (guarde a senha do banco em local seguro).
+3. Abra Project Settings > API.
+4. Copie Project URL e a chave anon/public.
+5. No menu SQL Editor, abra uma consulta nova, cole todo o conteúdo de schema.sql e clique em Run.
+6. Em Authentication > Providers, mantenha Email habilitado.
+7. Em Authentication > URL Configuration, configure a URL do site depois de publicar.
+8. Em Authentication > Users, confira o usuário administrador criado.
+
+PASSO 2 — CONFIGURAR O HTML
+1. Abra index.html em um editor.
+2. No começo do JavaScript, localize:
+   const SUPABASE_URL="COLE_AQUI_A_URL_DO_PROJETO";
+   const SUPABASE_ANON_KEY="COLE_AQUI_A_CHAVE_ANON_PUBLIC";
+3. Substitua pelos dados do seu projeto Supabase.
+   Use somente a chave anon/public. NUNCA coloque service_role, senha do banco ou segredo no HTML.
+4. Salve.
+
+PASSO 3 — PUBLICAR GRATUITAMENTE
+Recomendação: Firebase Hosting.
+1. Acesse https://firebase.google.com e crie um projeto.
+2. Instale Node.js no computador.
+3. No terminal, instale a CLI: npm install -g firebase-tools
+4. Faça login: firebase login
+5. Na pasta do projeto, execute: firebase init hosting
+6. Escolha o projeto Firebase, use a pasta public e configure como SPA se solicitado.
+7. Coloque index.html dentro da pasta public.
+8. Execute: firebase deploy --only hosting
+9. O Firebase fornecerá um endereço https://SEU-PROJETO.web.app
+Alternativa: GitHub Pages ou Netlify. O Firebase Hosting é recomendado para este projeto.
+
+PASSO 4 — CRIAR O PRIMEIRO ADMINISTRADOR
+1. Abra o endereço publicado.
+2. Clique em "Criar primeiro acesso".
+3. Informe o e-mail e senha que serão usados pela MK.
+4. Se a confirmação por e-mail estiver ativa, confirme a mensagem recebida.
+5. Entre no painel.
+IMPORTANTE: depois de criar o administrador, desative o cadastro público de novos usuários em Authentication > Settings/Signups (ou limite convites). A política SQL atual permite acesso à tabela a qualquer usuário autenticado; para uso real, restrinja os administradores a uma lista/role específica antes de convidar outras pessoas.
+
+PASSO 5 — TESTES OBRIGATÓRIOS ANTES DE ENVIAR A CLIENTES
+- Cadastre um contrato de teste com dados fictícios.
+- Abra o link em janela anônima/outro celular.
+- Confira os dados e assine com o dedo.
+- Verifique se o status muda para assinado no painel.
+- Baixe o PDF no portal do cliente e no painel.
+- Teste dois eventos na mesma data e horários diferentes.
+- Teste um link inválido e um contrato já assinado.
+
+LIMITAÇÕES CONHECIDAS DESTA VERSÃO INICIAL
+- O envio do link é feito copiando ou abrindo o WhatsApp; o sistema não dispara mensagens sozinho.
+- O PDF é gerado sob demanda no navegador e não fica salvo como arquivo no Storage nesta versão.
+- Não há ainda edição/cancelamento de contrato, bloqueio de conflito de horários, múltiplos funcionários/perfis, cobrança online, assinatura por certificado ou envio automático de e-mail.
+- O modelo de contrato é genérico e deve ser personalizado com a razão social, CNPJ/CPF, endereço e cláusulas da MK.
+- Configure backup e monitore limites do plano gratuito. Planos gratuitos podem mudar e podem suspender projetos inativos.
+
+SEGURANÇA
+- Nunca compartilhe a chave service_role.
+- Não armazene dados de cartão.
+- Proteja a conta Supabase com senha forte e MFA.
+- A tabela não permite leitura pública direta; o cliente acessa apenas por função RPC com token aleatório.
+- Antes de produção, substitua a política "authenticated" ampla por controle de administrador explícito (role/allowlist) e revise as funções públicas, limites de tamanho da assinatura e rate limiting.
